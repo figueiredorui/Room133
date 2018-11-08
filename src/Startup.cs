@@ -33,6 +33,12 @@ namespace Room133
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddCors(options => options.AddPolicy("CorsPolicy",
+           builder =>
+           {
+               builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().AllowCredentials();
+           }));
+
             Context.LogContext.EnsureCreated();
         }
 
@@ -49,6 +55,7 @@ namespace Room133
             }
 
             app.UseStaticFiles();
+            app.UseCors("CorsPolicy");
             //app.UseCookiePolicy();
 
 
