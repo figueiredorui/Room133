@@ -11,6 +11,7 @@ using Room133.Models;
 namespace Room133.Controllers
 {
     [Route("api/[controller]")]
+    [Route("api/temperature")]
     [ApiController]
     public class LogsController : ControllerBase
     {
@@ -28,8 +29,27 @@ namespace Room133.Controllers
             try
             {
                 var result = ctx.Logs
-                            .Where(q=>q.Date > DateTime.Now.AddDays(-2))
+                            //.Where(q=>q.Date > DateTime.Now.AddDays(-2))
                             .OrderByDescending(q=>q.Date).ToList();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        // GET api/logs
+        [HttpGet("current")]
+        public ActionResult<Log> GetCurrent()
+        {
+            try
+            {
+                var result = ctx.Logs
+                            //.Where(q=>q.Date > DateTime.Now.AddDays(-2))
+                            .OrderByDescending(q => q.Date).FirstOrDefault();
+                            
                 return Ok(result);
             }
             catch (Exception ex)
