@@ -16,7 +16,7 @@ setInterval(function () {
 
 function refreshChart() {
 
-    $.get("api/logs/history", function (data) {
+    $.get("api/temperature/history", function (data) {
 
         setChartData(mainChart, data);
         if (data !== null && data.length > 0) {
@@ -67,7 +67,7 @@ function initChart(canvas) {
                         beginAtZero: true,
                         stepSize: 1,
                         stepValue: 1,
-                        max: 30,
+                        max: 40,
                         min: 15
                     }
                 }, {
@@ -77,7 +77,7 @@ function initChart(canvas) {
                         beginAtZero: true,
                         stepSize: 1,
                         stepValue: 1,
-                        max: 30,
+                        max: 40,
                         min: 15
                     }
                 }]
@@ -118,7 +118,7 @@ function getDataAndCreateCanvas(i) {
     if (i > 30)
         return;
 
-    $.get("api/logs/history/" + i, function (data) {
+    $.get("api/temperature/history/" + i, function (data) {
         if (data !== null && data.length > 0) {
             addHistoryCanvas(i, data);
         }
