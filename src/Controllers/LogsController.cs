@@ -11,26 +11,25 @@ using Room133.Models;
 namespace Room133.Controllers
 {
     [Route("api/[controller]")]
-    [Route("api/temperature")]
+    [Route("api/logs")]
     [ApiController]
-    public class LogsController : ControllerBase
+    public class TemperatureController : ControllerBase
     {
         readonly LogContext ctx;
-        public LogsController()
+        public TemperatureController()
         {
             ctx = new LogContext();
-            
+            ClearHistory();
         }
 
-        // GET api/logs
+        // GET api/temperature
         [HttpGet]
         public ActionResult<IEnumerable<Log>> Get()
         {
             try
             {
                 var result = ctx.Logs
-                            //.Where(q=>q.Date > DateTime.Now.AddDays(-2))
-                            .OrderByDescending(q=>q.Date).ToList();
+                            .OrderByDescending(q => q.Date).ToList();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -40,16 +39,13 @@ namespace Room133.Controllers
 
         }
 
-        // GET api/logs
+        // GET api/temperature/current
         [HttpGet("current")]
         public ActionResult<Log> GetCurrent()
         {
             try
             {
-                var result = ctx.Logs
-                            //.Where(q=>q.Date > DateTime.Now.AddDays(-2))
-                            .OrderByDescending(q => q.Date).FirstOrDefault();
-                            
+                var result = ctx.Logs.OrderByDescending(q => q.Date).FirstOrDefault();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -58,7 +54,7 @@ namespace Room133.Controllers
             }
 
         }
-
+        // GET api/temperature/history/{daysBack?}
         [HttpGet("history/{daysBack?}")]
         public ActionResult<IEnumerable<LogHistory>> GetHistory(int? daysBack)
         {
@@ -71,9 +67,6 @@ namespace Room133.Controllers
 
                 var result = (from log in ctx.Logs
                               where log.Date.Date == date
-                              where (log.Date.Hour >= 7)
-                                && log.Date.Hour <= 19
-
                               group log by new { Day = log.Date.Day, Hour = log.Date.Hour, Minute = (log.Date.Minute / 15) * 15 } into grp
                               select new LogHistory()
                               {
@@ -159,6 +152,17 @@ namespace Room133.Controllers
             str.Append("}");
             return str.ToString();
         }
+
+        private void ClearHistory()
+        {
+            var result = ctx.Logs.Where(q => q.Date < DateTime.Now.AddDays(-15)).ToList();
+            foreach (var item in result)
+            {
+                ctx.Logs.Remove(item);
+            }
+            ctx.SaveChanges();
+        }
+
 
         /*
           var s = string.Format(@" {
