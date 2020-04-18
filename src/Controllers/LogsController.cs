@@ -67,9 +67,11 @@ namespace Room133.Controllers
 
                 var result = (from log in ctx.Logs
                               where log.Date.Date == date
-                              group log by new { Day = log.Date.Day, Hour = log.Date.Hour, Minute = (log.Date.Minute / 15) * 15 } into grp
+                              group log by new { log.Date.Date, Day = log.Date.Day, Hour = log.Date.Hour, Minute = (log.Date.Minute / 30) * 30 } into grp
                               select new LogHistory()
                               {
+                                  Date = grp.Key.Date,
+                                  Time = $"{grp.Key.Hour}h{grp.Key.Minute}",
                                   PointInTime = $"{grp.Key.Day}@{grp.Key.Hour}h{grp.Key.Minute}",
                                   Temperature = Math.Round(grp.Average(a => a.Temperature), 1)
                               }).ToList();

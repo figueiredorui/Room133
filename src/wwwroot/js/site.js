@@ -95,7 +95,7 @@ function setChartData(chart, data) {
         return;
 
     chart.data = {
-        labels: data.map(a => a.pointInTime),
+        labels: data.map(a => a.time),
         datasets: [
             {
                 label: 'Temperature',
